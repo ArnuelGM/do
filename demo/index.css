@@ -19,11 +19,35 @@
     border-color: var(--primary-dark-color);
 }
 
-.item__completed {
+.item--completed {
+    border-width: 1px;
     border-color: #ccc;
     box-shadow: none;
 }
-.item__completed .item__content {
+.item--completed .item__content {
     color: #ccc;
     text-decoration: line-through;
+}
+
+
+.item--enter {
+    animation: enter .3s ease;
+}
+
+.item--deleted {
+    animation: leave .3s ease;
+}
+
+
+@keyframes enter {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+}
+@keyframes leave {
+    to {
+        transform: translateX(70px);
+        opacity: 0;
+    }
 }
