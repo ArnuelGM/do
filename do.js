@@ -25,28 +25,28 @@
         return el
     }
     
-    class Task {
+    class Item {
     
-        name
+        content
         completed
         nodeElement
         validator
 
         renderOptions = {
-            'taskClass'             : 'tarea',
-            'completedTaskClass'    : 'tarea--completed',
-            'deletedTaskClass'      : 'tarea--deleted',
-            'checkTaskClass'        : 'tarea__check',
-            'contentTaskClass'      : 'tarea__content',
-            'deleteButtonTaskClass' : 'tarea__delete',
-            'deleteButtonTaskText'  : 'Delete',
+            'itemClass'             : 'item',
+            'completedItemClass'    : 'item--completed',
+            'deletedItemClass'      : 'item--deleted',
+            'checkItemClass'        : 'item__check',
+            'contentItemClass'      : 'item__content',
+            'deleteItemButtonClass' : 'item__delete',
+            'deleteItemButtonText'  : 'Delete',
             'deleteDelay'           : 0
         }
     
-        constructor(name, completed = false, renderOptions = {}, taskValidator = null) {
-            this.name = name
+        constructor(content, completed = false, renderOptions = {}, itemValidator = null) {
+            this.content = content
             this.completed = completed
-            this.validator = taskValidator
+            this.validator = itemValidator
             this.setRenderOptions(renderOptions)
         }
 
@@ -59,31 +59,31 @@
                 return !!this.validator(this)
             }
 
-            return !!this.name.length
+            return !!this.content.length
         }
     
         toggleComplete() {
             if (this.completed) {
-                this.nodeElement.classList.add('tarea--completed')
+                this.nodeElement.classList.add(this.renderOptions.completedItemClass)
             }
             else {
-                this.nodeElement.classList.remove('tarea--completed')
+                this.nodeElement.classList.remove(this.renderOptions.completedItemClass)
             }
         }
     
         remove() {
-            this.nodeElement.classList.add(this.renderOptions.deletedTaskClass)
+            this.nodeElement.classList.add(this.renderOptions.deletedItemClass)
             setTimeout(() => this.nodeElement.remove(), this.renderOptions.deleteDelay)
         }
     
         getRender() {
-            const task = createEl('div', {
-                'class': this.renderOptions.taskClass + ( this.completed ? ' ' + this.renderOptions.completedTaskClass : '' )
+            const item = createEl('div', {
+                'class': this.renderOptions.itemClass + ( this.completed ? ' ' + this.renderOptions.completedItemClass : '' )
             })
     
             const check = createEl('input', {
                 'type': 'checkbox',
-                'class': this.renderOptions.checkTaskClass
+                'class': this.renderOptions.checkItemClass
             }, {
                 'checked': this.completed
             }, {
@@ -93,38 +93,38 @@
                 }
             })
     
-            const content = createEl('p', {
-                'class': this.renderOptions.contentTaskClass
+            const content = createEl('label', {
+                'class': this.renderOptions.contentItemClass
             }, {
-                'textContent': this.name
+                'textContent': this.content
             })
             
             const deleteBtn = createEl('a', {
-                'class': this.renderOptions.deleteButtonTaskClass
+                'class': this.renderOptions.deleteItemButtonClass
             }, {
-                'textContent': this.renderOptions.deleteButtonTaskText
+                'textContent': this.renderOptions.deleteItemButtonText
             }, {
                 'click': () => this.remove()
             })
     
-            task.appendChild(check)
-            task.appendChild(content)
-            task.appendChild(deleteBtn)
+            item.appendChild(check)
+            item.appendChild(content)
+            item.appendChild(deleteBtn)
     
-            this.nodeElement = task
+            this.nodeElement = item
     
             return this.nodeElement
         }
     
     }
     
-    class TaskManager {
+    class ItemManager {
     
         container
         direction
     
-        constructor(taskContainerId, direction = 'start') {
-            this.container = document.getElementById(taskContainerId)
+        constructor(itemsContainerId, direction = 'start') {
+            this.container = document.getElementById(itemsContainerId)
             this.setDirection(direction)
         }
 
@@ -141,66 +141,66 @@
             }
         }
     
-        add(task) {
-            if( task.isValid() ) {
+        add(item) {
+            if( item.isValid() ) {
                 if( this.direction === 'end' )
-                    this.container.appendChild( task.getRender() )
+                    this.container.appendChild( item.getRender() )
                 else
-                    this.container.prepend( task.getRender() )
+                    this.container.prepend( item.getRender() )
             } 
         }
     
     }
     
-    class TaskForm {
+    class ItemForm {
     
         input
         button
         manager
-        taskRenderOptions = {}
-        taskValidator
+        itemRenderOptions = {}
+        itemValidator
     
-        constructor(taskFormId, taskManager, taskRenderOptions = {}, taskValidator = null) {
-            const formElement = document.getElementById(taskFormId)
+        constructor(itemFormId, itemManager, itemRenderOptions = {}, itemValidator = null) {
+            const formElement = document.getElementById(itemFormId)
             this.input = formElement.querySelector('input')
             this.button = formElement.querySelector('button')
-            this.manager = taskManager
-            this.taskRenderOptions = {...this.taskRenderOptions, ...taskRenderOptions}
-            this.taskValidator = taskValidator
+            this.manager = itemManager
+            this.itemRenderOptions = {...this.itemRenderOptions, ...itemRenderOptions}
+            this.itemValidator = itemValidator
         }
     
         init() {
-            this.button.addEventListener('click', () => this.createNewTask())
+            this.button.addEventListener('click', () => this.createNewItem())
         }
-    
+
         getContent() {
             return this.input.value
         }
-    
+
         setContent(content) {
             this.input.value = content
         }
-    
-        createNewTask() {
+
+        createNewItem() {
             const content = this.getContent()
-            const task = new Task(content, null, this.taskRenderOptions, this.taskValidator)
-            this.manager.add(task)
+            const item = new Item(content, null, this.itemRenderOptions, this.itemValidator)
+            this.manager.add(item)
             this.setContent('')
-            return task
+            return item
         }
     
     }
-    
-    class Do {
+
+    class Do {  
     
         form
         manager
         config = {}
     
-        constructor(taskContainerId, taskFormId, config = {}) {
+        constructor(itemsContainerId, itemFormId, config = {}) {
             this.config = {...this.config, ...config}
-            this.manager = new TaskManager(taskContainerId, this.config.addDirection)
-            this.form = new TaskForm(taskFormId, this.manager, this.config)
+            this.manager = new ItemManager(itemsContainerId, this.config.direction)
+            this.form = new ItemForm(itemFormId, this.manager, this.config)
         }
     
         init() {
