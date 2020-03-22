@@ -15,7 +15,7 @@ tasksApp.form.input.addEventListener('keyup', (ev) => {
 
 // Custom item validator
 tasksApp.form.itemValidator = (item) => {
-    if( item.name.trim().length == 0 ) {
+    if( item.content.trim().length == 0 ) {
         alert('Jajaja que dijiste, CORONÉ??')
         return false
     }
