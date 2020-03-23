@@ -30,7 +30,10 @@
         content
         completed
         nodeElement
-        validator
+
+        beforeItemDelete
+        onItemDeleted
+        onItemChanged
 
         renderOptions = {
             'itemClass'             : 'item',
@@ -43,23 +46,14 @@
             'deleteDelay'           : 0
         }
     
-        constructor(content, completed = false, renderOptions = {}, itemValidator = null) {
+        constructor(content, completed = false, renderOptions = {}) {
             this.content = content
             this.completed = completed
-            this.validator = itemValidator
             this.setRenderOptions(renderOptions)
         }
 
         setRenderOptions(options = {}) {
             this.renderOptions = {...this.renderOptions, ...options}
-        }
-    
-        isValid() {
-            if( typeof this.validator === 'function' ) {
-                return !!this.validator(this)
-            }
-
-            return !!this.content.length
         }
     
         toggleComplete() {
@@ -69,11 +63,31 @@
             else {
                 this.nodeElement.classList.remove(this.renderOptions.completedItemClass)
             }
+
+            if( typeof this.onItemChanged === 'function' ) {
+                this.onItemChanged(this)
+            }
         }
     
-        remove() {
-            this.nodeElement.classList.add(this.renderOptions.deletedItemClass)
-            setTimeout(() => this.nodeElement.remove(), this.renderOptions.deleteDelay)
+        async remove() {
+            
+            let deleteItem = true;
+
+            if( typeof this.beforeItemDelete === 'function' ) {
+                deleteItem = await this.beforeItemDelete(this)
+            }
+
+            if( deleteItem ) {
+
+                this.nodeElement.classList.add(this.renderOptions.deletedItemClass)
+    
+                setTimeout(() => {
+                    this.nodeElement.remove();
+                    if( typeof this.onItemDeleted === 'function' ) {
+                        this.onItemDeleted(this)
+                    }
+                }, this.renderOptions.deleteDelay)
+            }
         }
     
         getRender() {
@@ -115,17 +129,32 @@
     
             return this.nodeElement
         }
-    
+
     }
     
     class ItemManager {
     
         container
         direction
+
+        itemValidator
+
+        onItemAdded
+        beforeItemDelete
+        onItemDeleted
+        onItemChanged
     
-        constructor(itemsContainerId, direction = 'start') {
+        constructor(itemsContainerId, direction = 'start', itemValidator, onItemAdded, onItemChanged, beforeItemDelete, onItemDeleted) {
             this.container = document.getElementById(itemsContainerId)
+            
             this.setDirection(direction)
+
+            this.onItemAdded = onItemAdded
+            this.beforeItemDelete = beforeItemDelete
+            this.onItemDeleted = onItemDeleted
+            this.onItemChanged = onItemChanged
+
+            this.setItemValidator(itemValidator)
         }
 
         setDirection(direction) {
@@ -134,39 +163,67 @@
                 case 'end':
                     this.direction = direction
                     break
-            
+
                 default:
                     this.direction = 'start'
                     break
             }
         }
-    
-        add(item) {
-            if( item.isValid() ) {
-                if( this.direction === 'end' )
+
+        setItemValidator(validator) {
+            if( typeof validator === 'function' ) {
+                this.itemValidator = validator
+            }
+            else {
+                this.itemValidator = this._getDefaultItemValidator()
+            }
+        }
+
+        _getDefaultItemValidator() {
+            const validator = (item) => {
+                return item.content.length > 0
+            }
+            return validator
+        }
+
+        async add(item) {
+
+            let isValid = await this.itemValidator(item)
+
+            if( isValid ) {
+
+                item.onItemChanged = this.onItemChanged
+                item.beforeItemDelete = this.beforeItemDelete
+                item.onItemDeleted = this.onItemDeleted
+
+                if( this.direction === 'end' ) {
                     this.container.appendChild( item.getRender() )
-                else
+                }
+                else {
                     this.container.prepend( item.getRender() )
-            } 
+                }
+
+                if( typeof this.onItemAdded === 'function' ) {
+                    this.onItemAdded(item)
+                }
+            }
         }
     
     }
     
     class ItemForm {
-    
+
         input
         button
         manager
-        itemRenderOptions = {}
-        itemValidator
+        config = {}
     
-        constructor(itemFormId, itemManager, itemRenderOptions = {}, itemValidator = null) {
+        constructor(itemFormId, itemManager, config = {}) {
             const formElement = document.getElementById(itemFormId)
             this.input = formElement.querySelector('input')
             this.button = formElement.querySelector('button')
             this.manager = itemManager
-            this.itemRenderOptions = {...this.itemRenderOptions, ...itemRenderOptions}
-            this.itemValidator = itemValidator
+            this.config = {...this.config, ...config}
         }
     
         init() {
@@ -181,9 +238,13 @@
             this.input.value = content
         }
 
+        setConfig(config) {
+            this.config = {...this.config, ...config}
+        }
+
         createNewItem() {
             const content = this.getContent()
-            const item = new Item(content, null, this.itemRenderOptions, this.itemValidator)
+            const item = new Item(content, null, this.config)
             this.manager.add(item)
             this.setContent('')
             return item
@@ -191,16 +252,24 @@
     
     }
 
-    class Do {  
+    class Do {
     
         form
         manager
-        config = {}
     
-        constructor(itemsContainerId, itemFormId, config = {}) {
-            this.config = {...this.config, ...config}
-            this.manager = new ItemManager(itemsContainerId, this.config.direction)
-            this.form = new ItemForm(itemFormId, this.manager, this.config)
+        constructor(
+            itemsContainerId, 
+            itemFormId,
+            config = {},
+            itemValidator,
+            onItemAdded,
+            onItemChanged,
+            beforeItemDelete,
+            onItemDeleted
+        ) {
+            const options = {...this.config, ...config}
+            this.manager = new ItemManager(itemsContainerId, options.direction, itemValidator, onItemAdded, onItemChanged, beforeItemDelete, onItemDeleted)
+            this.form = new ItemForm(itemFormId, this.manager, options)
         }
     
         init() {
