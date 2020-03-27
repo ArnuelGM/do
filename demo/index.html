@@ -7,17 +7,17 @@
     <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
     <link rel="stylesheet" href="./index.css">
 </head>
-<body>
-    <div class="main__container mx-auto max-w-2xl p-4">
+<body class="w-full h-screen bg-gray-100">
+    <div class="mx-auto max-w-xl p-4">
 
-        <h1 class="text-3xl text-indigo-700 font-bold">Do</h1>
+        <h1 class="text-6xl text-gray-400 text-center">todos</h1>
 
-        <div class="flex items-center mb-4" id="form_task">
-            <input class="flex-grow border py-2 px-5 border-indigo-700 text-indigo-700 rounded-bl-lg outline-none" type="text" placeholder="Write something here..">
-            <button class="border ml-1 py-2 px-5 border-indigo-700 text-indigo-700 uppercase font-bold rounded-tr-lg outline-none">Save</button>
+        <div class="flex items-center p-4 bg-white shadow-md" id="form_task">
+            <input class="flex-1 p-2 border-gray-300 text-gray-700 outline-none text-2xl ml-8" type="text" placeholder="What needs to be done?">
+            <button class="py-2 px-4 text-gray-700 uppercase font-bold outline-none hidden"></button>
         </div>
 
-        <div class="tareas__container" id="task_container">
+        <div id="task_container">
             <!-- 
             <div>
                 <input type="text">
@@ -26,9 +26,12 @@
             </div> 
             -->
         </div>
+        <div class="flex items-center px-4 py-2 shadow-md bg-white border-t">
+            <span class="text-sm text-gray-700 counter">0 items left</span>
+        </div>
 
-        <div class="border-t">
-            <p class="text-sm text-gray-500">&copy; 2020 Arnuel Gutierrez Menco</p>
+        <div class="mt-16">
+            <p class="text-xs text-gray-400 text-center">do.js <br> 2020 Arnuel Gutierrez Menco</p>
         </div>
     </div>
 

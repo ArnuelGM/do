@@ -1,48 +1,45 @@
-// Custom item validator
-const itemValidator = async (item) => {
+const items = []
 
-    let valid = false
-    if( !item.content.trim().length )
-        alert('Please write someting')
-    else
-        valid = true
+function updateItemsCounter() {
+    let counter = 0
 
-    return valid
+    items.forEach((i) => {
+        if(!i.completed) counter++
+    })
+
+    document.querySelector('.counter').innerHTML = `${counter} item${ counter === 1 ? '' : 's' } left`
 }
 
 // On item added
 const onItemAdded = (item) => {
-    console.log(`Item added: ${item.content}`);
+    items.push(item);
+    updateItemsCounter();
 }
 
-// After item delete
-const afterItemDelete = (item) => {
-    return confirm(`Really do you wanna delete: ${item.content}?`)
+// Before item delete
+const beforeItemDelete = (item) => {
+    item.completed = true
+    return true
 }
 
 // onItemDeleted
-const onItemDeleted = (item) => {
-    alert(`item deleted.`)
-}
+const onItemDeleted = (item) => updateItemsCounter()
 
 // Item changed
 const onItemChanged = (item) => {
     console.log(`${item.content} has changed to ${item.completed}`)
+    updateItemsCounter()
 }
 
 const tasksApp = new Do('task_container', 'form_task', 
         {
-            'itemClass'             : 'item--enter flex items-center border-2 rounded-bl-lg rounded-tr-lg border-indigo-700 px-4 py-3 mb-3 shadow-lg',
-            'checkItemClass'        : 'item__check mr-4 cursor-pointer appearance-none border w-6 h-6 rounded-full flex items-center justify-center outline-none',
-            'contentItemClass'      : 'flex-grow text-indigo-700 item__content',
-            'deleteItemButtonClass' : 'ml-4 text-sm text-gray-500 cursor-pointer',
-            'deleteDelay'           : 300
-        },
-        itemValidator,
-        onItemAdded,
-        onItemChanged,
-        afterItemDelete,
-        onItemDeleted
+            'itemClass'             : 'item--enter flex items-center px-4 py-2 shadow-md bg-white border-t',
+            'checkItemClass'        : 'mr-4 -ml-4 appearance-none w-10 h-12 outline-none',
+            'contentItemClass'      : 'flex-1 text-gray-700 text-2xl item__content leading-8',
+            'deleteItemButtonClass' : 'item__delete hidden text-3xl text-gray-500 cursor-pointer px-2 leading-none',
+            'deleteItemButtonText'  : '', // It will be change with css pseudo element
+            'direction'             : 'end',
+        }
     )
 
 // Create item on press enter key
@@ -52,12 +49,9 @@ tasksApp.form.input.addEventListener('keyup', (ev) => {
     }
 })
 
-/**
-tasksApp.manager.itemValidator = itemValidator
 tasksApp.manager.onItemAdded = onItemAdded
 tasksApp.manager.onItemChanged = onItemChanged
-tasksApp.manager.afterItemDelete = afterItemDelete
+tasksApp.manager.beforeItemDelete = beforeItemDelete
 tasksApp.manager.onItemDeleted = onItemDeleted
-*/
 
 tasksApp.init()
