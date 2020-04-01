@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do.js App Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
+    <link rel="stylesheet" href="./animate.css">
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body class="w-full h-screen bg-black">
+    
+    <div class="h-full bg-gray-900 max-w-4xl mx-auto p-4">
+
+        <div class="flex items-center mb-4" id="items_form">
+            <input type="text" style="min-width: 100px;" placeholder="Write someting here.."
+                class="flex-1 outline-none py-2 px-4 text-lg border border-gray-800 bg-transparent text-gray-400">
+            <button class="px-4 py-2 ml-2 uppercase text-lg text-gray-400 bg-gray-800 outline-none">save</button>
+        </div>
+
+        <div id="items_list">
+            <!-- <div class="px-4 py-2 mb-2 flex items-center border border-gray-800">
+                <input class="mr-4 appearance-none w-10 h-8 -ml-4 outline-none" type="checkbox">
+                <label class="flex-1 text-gray-400">Lorem ipsum dolor sit amet consectetur.</label>
+                <a class="text-xs text-gray-600 cursor-pointer">Delete</a>
+            </div> -->
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="../do.js"></script>
+    <script src="./index.js"></script>
+</body>
+</html>

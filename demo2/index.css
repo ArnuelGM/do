@@ -1,0 +1,4 @@
+.item--completed label{
+    text-decoration: line-through;
+    color: #2d3748;
+}
