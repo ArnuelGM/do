@@ -24,6 +24,9 @@
         }
         return el
     }
+    function getClasses(classes) {
+        return String(classes).trim().split(',')
+    }
     
     class Item {
     
@@ -43,6 +46,7 @@
             'contentItemClass'      : 'item__content',
             'deleteItemButtonClass' : 'item__delete',
             'deleteItemButtonText'  : 'Delete',
+            'deleteItemButtonHtml'  : '',
             'deleteDelay'           : 0
         }
     
@@ -57,11 +61,12 @@
         }
     
         toggleComplete() {
+            const classes = getClasses(this.renderOptions.completedItemClass)
             if (this.completed) {
-                this.nodeElement.classList.add(this.renderOptions.completedItemClass)
+                this.nodeElement.classList.add(...classes)
             }
             else {
-                this.nodeElement.classList.remove(this.renderOptions.completedItemClass)
+                this.nodeElement.classList.remove(...classes)
             }
 
             if( typeof this.onItemChanged === 'function' ) {
@@ -71,7 +76,7 @@
     
         async remove() {
             
-            let deleteItem = true;
+            let deleteItem = true
 
             if( typeof this.beforeItemDelete === 'function' ) {
                 deleteItem = await this.beforeItemDelete(this)
@@ -79,8 +84,9 @@
 
             if( deleteItem ) {
 
-                this.nodeElement.classList.add(this.renderOptions.deletedItemClass)
-    
+                const classes = getClasses(this.renderOptions.deletedItemClass)
+                this.nodeElement.classList.add(...classes)
+
                 setTimeout(() => {
                     this.nodeElement.remove();
                     if( typeof this.onItemDeleted === 'function' ) {
@@ -92,12 +98,12 @@
     
         getRender() {
             const item = createEl('div', {
-                'class': this.renderOptions.itemClass + ( this.completed ? ' ' + this.renderOptions.completedItemClass : '' )
+                'class': getClasses(this.renderOptions.itemClass).join(' ').trim() + ( this.completed ? ' ' + getClasses(this.renderOptions.completedItemClass).join(' ').trim() : '' )
             })
-    
+            
             const check = createEl('input', {
                 'type': 'checkbox',
-                'class': this.renderOptions.checkItemClass
+                'class': getClasses(this.renderOptions.checkItemClass).join(' ').trim()
             }, {
                 'checked': this.completed
             }, {
@@ -108,18 +114,21 @@
             })
     
             const content = createEl('label', {
-                'class': this.renderOptions.contentItemClass
+                'class': getClasses(this.renderOptions.contentItemClass).join(' ').trim()
             }, {
                 'textContent': this.content
             })
             
             const deleteBtn = createEl('a', {
-                'class': this.renderOptions.deleteItemButtonClass
+                'class': getClasses(this.renderOptions.deleteItemButtonClass).join(' ').trim()
             }, {
                 'textContent': this.renderOptions.deleteItemButtonText
             }, {
                 'click': () => this.remove()
             })
+            if(this.renderOptions.deleteItemButtonHtml.trim().length){
+                deleteBtn.innerHTML = this.renderOptions.deleteItemButtonHtml
+            }
     
             item.appendChild(check)
             item.appendChild(content)
