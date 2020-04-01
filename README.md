@@ -38,28 +38,37 @@ const doInstance = new Do(
     // Object config (OPTIONAL)
     {
         // Css class to set in the html element that represents an item (main element). This a `<div>` element.
+        // can pass an Array<string>
         'itemClass': 'item', // default
 
         // Css class to set in main element when is completed.
+        // can pass an Array<string>
         'completedItemClass': 'item-completed', // default
 
         // Css class to set in main element before delete.
+        // can pass an Array<string>
         'deletedItemClass': 'item-deleted', // default
 
         // Time in miliseconds to wait before delete the item.
         'deleteDelay': 0, // default
 
         // Css class to set to main element checkbox. This is a `<input type=checkbox>` element.
+        // can pass an Array<string>
         'checkItemClass': 'item__check', // default
 
         // Css class to set to main element content. This is a `<p>` element.
+        // can pass an Array<string>
         'contentItemClass': 'item__content', // default
 
         // Css class to set to main element delete button, This is a `<a>` element.
+        // can pass an Array<string>
         'deleteItemButtonClass': 'item__delete', // default
 
         // Text to set to main element delete button.
         'deleteItemButtonText': 'Delete', // default
+
+        // Html content to set to main element delete button. This will replace 'deleteItemButtonText'
+        'deleteItemButtonHtml': '', // default
 
         // It should to add new items to 'start' or 'end' of list.
         'direction': 'start', // default
