@@ -161,7 +161,7 @@ If new the new item do not pass `itemValidator` function then do not will be add
 
 #### instance.form
 
-Represents the form. Has the follow inportant properties:
+Represents the input and button where user trigger the creation of new items. Has the follow inportant properties:
 
 ```JavaScript
 instance.form: {
@@ -193,3 +193,49 @@ instance.form: {
 `instance.form.button` - has a click listener to `instance.form.createNewItem()` method.
 
 `instance.form.getContent()` and `instance.form.setContent(content)` - gets and sets content to the `instance.form.input`
+
+
+## Item
+
+This class represents a new item and contains a property that represents the node element in the DOM
+
+```JavaScript
+item: {
+
+    // The content of the item
+    // Default: ''
+    // required
+    content: string,
+
+    // If the item is checked/completed
+    // Default: false
+    completed: boolean,
+
+    // The node element on the DOM
+    /*
+    <div>
+      <input type="checbox">
+      <label>content</label>
+      <a>Delete</a>
+    </div>
+    */
+    nodeElement: HTMLDivElement,
+
+    // Called before item will delete
+    // this function is assiged by instance.manager after validate the new item
+    // receive the this class like argument
+    beforeItemDelete: function,
+
+    // Called after item was deleted
+    // this function is assiged by instance.manager after validate the new item
+    onItemDeleted: function,
+
+    // Called when <input type="checkbox"> change
+    // this function is assiged by instance.manager after validate the new item
+    onItemChanged: function,
+
+    // This object contains the initial class properties values of this.nodeElement and his children elements
+    // is populated by the third argument of the constructor new Do( .., .., Options <- this )
+    renderOptions: {...}
+}
+```
