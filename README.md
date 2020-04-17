@@ -1,6 +1,6 @@
 # Do.js
 
-A little library to make TODO apps.
+A little library to make TO-DO apps.
 
 
 ## How to use
