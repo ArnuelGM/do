@@ -29,11 +29,11 @@ tasksApp.init();
 
 ```JavaScript
 const doInstance = new Do(
-    // First parameter is the ID of the element list parent
-    `listId`,
+    // ID or HTMLElement of the element list parent
+    `listElement`,
 
-    // ID of parent element where input and button are
-    `formId`,
+    // ID or HTMLElement of parent element where input and button are
+    `formElement`,
 
     // Object config (OPTIONAL)
     {
@@ -43,11 +43,11 @@ const doInstance = new Do(
 
         // Css class to set in main element when is completed.
         // can pass an Array<string>
-        'completedItemClass': 'item-completed', // default
+        'completedItemClass': 'item--completed', // default
 
         // Css class to set in main element before delete.
         // can pass an Array<string>
-        'deletedItemClass': 'item-deleted', // default
+        'deletedItemClass': 'item--deleted', // default
 
         // Time in miliseconds to wait before delete the item.
         'deleteDelay': 0, // default

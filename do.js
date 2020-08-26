@@ -153,8 +153,17 @@
         onItemDeleted
         onItemChanged
     
-        constructor(itemsContainerId, direction = 'start', itemValidator, onItemAdded, onItemChanged, beforeItemDelete, onItemDeleted) {
-            this.container = document.getElementById(itemsContainerId)
+        constructor(itemsContainer, direction = 'start', itemValidator, onItemAdded, onItemChanged, beforeItemDelete, onItemDeleted) {
+            
+            if( typeof itemsContainer === 'string' ) {
+                this.container = document.getElementById(itemsContainer)
+            }
+            else if( itemsContainer instanceof HTMLElement ) {
+                this.container = itemsContainer
+            }
+            else {
+                throw new Error('El contenedor de items no es válido.');
+            }
             
             this.setDirection(direction)
 
@@ -227,10 +236,27 @@
         manager
         config = {}
     
-        constructor(itemFormId, itemManager, config = {}) {
-            const formElement = document.getElementById(itemFormId)
+        constructor(itemForm, itemManager, config = {}) {
+
+            let formElement;
+            if( typeof itemForm === 'string' ) {
+                formElement = document.getElementById(itemForm)
+            }
+            else if( itemForm instanceof HTMLElement ) {
+                formElement = itemForm
+            }
+            else {
+                throw new Error('El contenedor de formulario no es válido.')
+            }
+
+
             this.input = formElement.querySelector('input')
             this.button = formElement.querySelector('button')
+
+            if( !this.input || !this.button ) {
+                throw new Error('No se encontraron los elementos necesarios dentro del formulario. [input, button]')
+            }
+
             this.manager = itemManager
             this.config = {...this.config, ...config}
         }
@@ -267,8 +293,8 @@
         manager
     
         constructor(
-            itemsContainerId, 
-            itemFormId,
+            itemsContainer, 
+            itemForm,
             config = {},
             itemValidator,
             onItemAdded,
@@ -277,8 +303,8 @@
             onItemDeleted
         ) {
             const options = {...this.config, ...config}
-            this.manager = new ItemManager(itemsContainerId, options.direction, itemValidator, onItemAdded, onItemChanged, beforeItemDelete, onItemDeleted)
-            this.form = new ItemForm(itemFormId, this.manager, options)
+            this.manager = new ItemManager(itemsContainer, options.direction, itemValidator, onItemAdded, onItemChanged, beforeItemDelete, onItemDeleted)
+            this.form = new ItemForm(itemForm, this.manager, options)
         }
     
         init() {
